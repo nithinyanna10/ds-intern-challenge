@@ -1,49 +1,53 @@
-# Data Science Intern Build Challenge
+# Submission README
 
-A lightweight build challenge for Data Science Intern candidates to show how they think, build, and work with AI.
+## Track Chosen
 
-This is not a puzzle with one hidden correct answer. It is also not a "don't use AI" exercise. You may use AI as much as you want. The signal is whether you can give it useful context, question its output, and make good decisions in a messy domain.
+Track A: Fictional Domain Packet (SignalDesk).
 
-## Quick Version
+## What I Built
 
-Target time: 90 minutes. Please stop at 2 hours.
+A single script (`analyze.py`) that cleans `product_usage_events.csv` and produces
+`health_check_report.md` — a weekly health check for the three AI workflows, broken
+down by workflow *and* source (since sessions across sources aren't comparable),
+plus a short "what looks suspicious / what to look at next" section. Run it with
+`python3 analyze.py`. `test_analyze.py` is a small self-check on the cleaning logic.
 
-Pick **one** track:
+## Who It Is For
 
-1. **Fictional Domain Packet**: read [domain-packet.md](domain-packet.md) and use the messy dataset in [sample-data/product_usage_events.csv](sample-data/product_usage_events.csv).
-2. **Bring Your Own Domain**: use a small public or synthetic dataset from a domain you care about.
-3. **Tiny Model / Eval**: use a small model, prompt, heuristic, or evaluation workflow to answer a practical question in a domain you choose.
+The teammate who asked "what's working, what's suspicious, what should we look at
+next" — someone who wants a 2-minute read, not a dashboard, before their next
+standup or planning call.
 
-Build one small useful artifact for a teammate. Acceptable artifacts include:
+## Data Or Source Used
 
-- a short notebook;
-- a small Streamlit app;
-- a simple script with clear output;
-- a lightweight web page;
-- a tiny internal-tool style interface.
+`sample-data/product_usage_events.csv` from this repo (fictional, 41 rows, one week
+of daily workflow usage across Sales/Support/Product).
 
-Please also include:
+## Assumptions I Made
 
-- `README.md`: what you built, who it is for, data/source used, assumptions, issues noticed, and what you would do next;
-- `AI_NOTE.md`: whether/how you used AI, what helped, and what you verified or decided yourself.
+- Sessions across different `source`s (email vs. manual vs. queue vs. csv upload)
+  are not directly comparable, so I aggregated by (workflow, source), not just
+  workflow.
+- `median_confidence` should not be treated as a quality signal — I checked whether
+  it moved with `user_rating` and it didn't (see report), which supports the domain
+  packet's warning.
+- The 2026-08-05 demo-account spike and the 2026-08-07 duplicate row are data
+  artifacts, not real usage — I dropped the exact duplicate and called out the spike
+  rather than silently smoothing either into the aggregates.
 
-## What We Care About
+## Data Issues Or Caveats I Noticed
 
-- Domain digestion: can you understand unfamiliar context quickly?
-- Scope judgment: did you pick something finishable and useful?
-- Data/source judgment: did you notice weirdness without getting stuck?
-- Product sense: would this help a real teammate?
-- Engineering fundamentals: does it run, and is it understandable?
-- AI collaboration: if you used AI, did you use it thoughtfully?
+- One exact-duplicate export row (2026-08-05 Lead summary/email).
+- Inconsistent team casing (`product` vs `Product`).
+- `median_confidence` stored as text `"n/a"` on one row, not blank.
+- One blank `user_rating`.
+- A traffic spike explicitly flagged in `notes` as coming from a demo account.
+- A same-day policy change (8/7) that moves completion, flag rate, and rating
+  sharply — genuinely ambiguous whether that's a quality problem or the review
+  policy doing its job.
 
-## What We Do Not Care About
+## What I Would Do Next With More Time
 
-- Perfect polish.
-- The most accurate model.
-- A complex app.
-- A long report.
-- Legal-tech knowledge.
-- LeetCode-style cleverness.
-- Spending money on cloud tools.
-
-Read the full prompt in [challenge.md](challenge.md), and choose a track from [tracks.md](tracks.md).
+Track day-over-day trend within the week (not just the week's total) to see if
+Lead summary's acceptance rate is still rising after the 8/4 prompt change, and
+add a second week of data to tell a policy effect apart from a one-day blip.
